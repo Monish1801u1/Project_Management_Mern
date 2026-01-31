@@ -53,7 +53,7 @@ export function TaskColumn({ column, tasks, onEditTask }: TaskColumnProps) {
        return (
               <div
                      ref={setNodeRef}
-                     className={`flex h-full w-[350px] min-w-[350px] flex-col rounded-xl bg-muted/50 p-4 border-2 border-dashed border-transparent hover:border-gray-200 dark:hover:border-gray-800 transition-colors ${columnColor}`}
+                     className={`flex h-full w-[350px] min-w-[350px] flex-col rounded-2xl glass border-none p-4 transition-colors ${columnColor}`}
               >
                      <div className="mb-4 flex items-center justify-between">
                             <div className="flex items-center gap-2">

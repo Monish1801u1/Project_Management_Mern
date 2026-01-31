@@ -33,7 +33,7 @@ import { Separator } from "../ui/separator";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useAuthContext } from "@/context/auth-provider";
 import { ModeToggle } from "../mode-toggle";
-import { SearchDialog } from "../workspace/search/search-dialog";
+
 
 const Asidebar = () => {
   const { isLoading, user } = useAuthContext();
@@ -45,8 +45,8 @@ const Asidebar = () => {
 
   return (
     <>
-      <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
-        <SidebarHeader className="!py-0 bg-sidebar text-sidebar-foreground">
+      <Sidebar collapsible="icon" variant="floating" className="border-r-0 bg-transparent text-sidebar-foreground glass-sidebar border-none shadow-none [&>div]:bg-transparent">
+        <SidebarHeader className="!py-0 bg-transparent text-sidebar-foreground">
           <div className="flex h-[50px] items-center justify-start w-full px-1">
             <Logo url={`/workspace/${workspaceId}`} />
             {open && (
@@ -57,12 +57,10 @@ const Asidebar = () => {
                 ZOHO
               </Link>
             )}
-            <div className="ml-auto flex items-center gap-1">
-              <SearchDialog />
-            </div>
+
           </div>
         </SidebarHeader>
-        <SidebarContent className="!mt-0 bg-sidebar text-sidebar-foreground">
+        <SidebarContent className="!mt-0 bg-transparent text-sidebar-foreground">
           <SidebarGroup className="!py-0">
             <SidebarGroupContent>
               <WorkspaceSwitcher />
@@ -73,7 +71,7 @@ const Asidebar = () => {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="bg-sidebar text-sidebar-foreground p-2">
+        <SidebarFooter className="bg-transparent text-sidebar-foreground p-2">
           <div className="flex items-center justify-between mb-2 px-2">
             <div className="flex items-center gap-1">
               <ModeToggle />

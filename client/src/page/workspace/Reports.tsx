@@ -78,7 +78,7 @@ const Reports = () => {
 
                             <TabsContent value="tasks" className="space-y-4">
                                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
-                                          <Card>
+                                          <Card className="glass-card">
                                                  <CardHeader>
                                                         <CardTitle>Task Status Distribution</CardTitle>
                                                         <CardDescription>Breakdown of tasks by current status</CardDescription>
@@ -91,7 +91,7 @@ const Reports = () => {
                                                                              cx="50%"
                                                                              cy="50%"
                                                                              labelLine={false}
-                                                                             label={({ name, percent }: { name: string; percent: number }) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                                                                             label={({ name, percent }: { name?: string; percent?: number }) => `${name || ''} ${((percent || 0) * 100).toFixed(0)}%`}
                                                                              outerRadius={80}
                                                                              fill="#8884d8"
                                                                              dataKey="value"
@@ -100,14 +100,14 @@ const Reports = () => {
                                                                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                                                              ))}
                                                                       </Pie>
-                                                                      <Tooltip />
+                                                                      <Tooltip contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "8px", color: "var(--foreground)" }} />
                                                                       <Legend />
                                                                </PieChart>
                                                         </ResponsiveContainer>
                                                  </CardContent>
                                           </Card>
 
-                                          <Card>
+                                          <Card className="glass-card">
                                                  <CardHeader>
                                                         <CardTitle>Task Priority Breakdown</CardTitle>
                                                         <CardDescription>Tasks grouped by priority level</CardDescription>
@@ -118,7 +118,7 @@ const Reports = () => {
                                                                       <CartesianGrid strokeDasharray="3 3" />
                                                                       <XAxis dataKey="name" />
                                                                       <YAxis />
-                                                                      <Tooltip />
+                                                                      <Tooltip contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "8px", color: "var(--foreground)" }} cursor={{ fill: 'transparent' }} />
                                                                       <Legend />
                                                                       <Bar dataKey="value" fill="#82ca9d" name="Tasks" />
                                                                </BarChart>
@@ -129,7 +129,7 @@ const Reports = () => {
                             </TabsContent>
 
                             <TabsContent value="members" className="space-y-4">
-                                   <Card>
+                                   <Card className="glass-card">
                                           <CardHeader>
                                                  <CardTitle>Tasks Assigned by Member</CardTitle>
                                                  <CardDescription>Workload distribution across team members</CardDescription>
@@ -140,7 +140,7 @@ const Reports = () => {
                                                                <CartesianGrid strokeDasharray="3 3" />
                                                                <XAxis type="number" />
                                                                <YAxis dataKey="name" type="category" width={100} />
-                                                               <Tooltip />
+                                                               <Tooltip contentStyle={{ backgroundColor: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(10px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "8px", color: "var(--foreground)" }} cursor={{ fill: 'transparent' }} />
                                                                <Legend />
                                                                <Bar dataKey="tasks" fill="#8884d8" name="Assigned Tasks" radius={[0, 4, 4, 0]} />
                                                         </BarChart>

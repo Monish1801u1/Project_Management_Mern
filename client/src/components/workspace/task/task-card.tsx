@@ -31,6 +31,8 @@ export function TaskCardView({
        attributes?: any;
        setNodeRef?: (node: HTMLElement | null) => void;
        style?: any;
+       transform?: any;
+       transition?: any;
        onEdit?: (task: TaskType) => void;
 }) {
        if (isDragging) {
@@ -59,7 +61,7 @@ export function TaskCardView({
               <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
                      <Card
                             onClick={() => onEdit?.(task)}
-                            className="cursor-pointer active:cursor-grabbing hover:shadow-md transition-shadow dark:bg-[#1a1c1e] group relative"
+                            className="cursor-pointer active:cursor-grabbing glass-card hover:bg-white/40 dark:hover:bg-black/40 group relative border-0"
                      >
                             <CardHeader className="p-4 pb-2 space-y-2">
                                    <div className="flex justify-between items-start">

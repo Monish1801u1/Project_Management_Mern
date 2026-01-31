@@ -7,6 +7,8 @@ import useGetWorkspaceQuery from "@/hooks/api/use-get-workspace";
 import { useNavigate } from "react-router-dom";
 import usePermissions from "@/hooks/use-permissions";
 import { PermissionType } from "@/constant";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { logoutMutationFn } from "@/lib/api";
 
 // Define the context shape
 type AuthContextType = {
@@ -19,6 +21,7 @@ type AuthContextType = {
   workspaceLoading: boolean;
   refetchAuth: () => void;
   refetchWorkspace: () => void;
+  logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const navigate = useNavigate();
   const workspaceId = useWorkspaceId();
+  const queryClient = useQueryClient();
 
   const {
     data: authData,
@@ -61,6 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     return permissions.includes(permission);
   };
 
+  const { mutate: logout } = useMutation({
+    mutationFn: logoutMutationFn,
+    onSuccess: () => {
+      queryClient.setQueryData(["authUser"], null);
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      window.location.replace("/"); // Hard reload/redirect to clear state
+    },
+    onError: (error) => {
+      console.error("Logout failed", error);
+    }
+  });
+
   return (
     <AuthContext.Provider
       value={{
@@ -73,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         workspaceLoading,
         refetchAuth,
         refetchWorkspace,
+        logout,
       }}
     >
       {children}

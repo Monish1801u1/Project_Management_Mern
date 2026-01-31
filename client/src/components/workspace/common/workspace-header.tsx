@@ -1,11 +1,16 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuthContext } from "@/context/auth-provider";
-import { Loader } from "lucide-react";
+import { useZenMode } from "@/context/zen-mode-context";
+import { Loader, Maximize2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const WorkspaceHeader = () => {
   const { workspaceLoading, workspace } = useAuthContext();
+  const { toggleZenMode } = useZenMode();
+
   return (
-    <div className="w-full max-w-3xl mx-auto pb-2">
+    <div className="w-full max-w-3xl mx-auto pb-2 flex items-center justify-between">
       {workspaceLoading ? (
         <Loader className="w-8 h-8 animate-spin" />
       ) : (
@@ -23,6 +28,25 @@ const WorkspaceHeader = () => {
           </div>
         </div>
       )}
+
+      {/* Zen Mode Toggle */}
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleZenMode}
+              className="rounded-full hover:bg-white/10 hover:text-cyan-400 transition-colors"
+            >
+              <Maximize2 className="w-5 h-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Enter Zen Mode (Ctrl+J)</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };
