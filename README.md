@@ -83,90 +83,89 @@ Project-Management/
        routes/          # Route definitions
        types/           # TypeScript types
        App.tsx          # Root component
-       main.tsx         # Entry point
-    public/              # Static assets
-    vite.config.ts       # Vite configuration
-    # Project Management (MERN)
+      ## Project Management (MERN)
 
-   Lightweight, extensible project and workspace management app built with the MERN stack (MongoDB, Express, React, Node) and TypeScript.
+      A simple, practical project and workspace management application built with the MERN stack (MongoDB, Express, React, Node) and TypeScript. Use this project as a starting point for internal team tools or as a learning reference for a full-stack TypeScript app.
 
-   **This repo contains two main folders:** `backend/` (API + services) and `client/` (Vite + React frontend).
+      Why this repo?
+      - Focused feature set for small-to-medium teams: workspaces, projects, tasks, comments, members, and role-based permissions.
+      - Organized TypeScript codebase that separates API, services, and UI.
+      - Ready to run locally or deploy to a cloud provider with minor configuration.
 
-   ## Quick Start
+      Repository layout (high level)
+      - `backend/` — Express API, TypeScript code, models, controllers, services, validation, and seeders.
+      - `client/` — Vite + React + TypeScript frontend, components, pages, and routes.
 
-   Prerequisites:
-   - Node.js 14+ and npm
-   - MongoDB (local or Atlas)
+      What you'll find here
+      - Workspace and project management features
+      - Task boards, calendars, and simple analytics
+      - Invitations and member management
+      - Role-based access control and activity logging
 
-   1. Install backend dependencies and run:
+      Getting started (local development)
 
-   ```powershell
-   cd backend
-   npm install
-   npm run dev
-   ```
+      1) Backend
 
-   2. Install frontend dependencies and run:
+      ```powershell
+      cd backend
+      npm install
+      cp .env.example .env   # create .env from template if present
+      # Edit .env and set MONGODB_URI and JWT_SECRET
+      npm run dev
+      ```
 
-   ```powershell
-   cd client
-   npm install
-   npm run dev
-   ```
+      The backend runs by default on port 5000 (see `backend/.env`).
 
-   The frontend expects an API base URL in `client/.env.local` (example below).
+      2) Frontend
 
-   ## Environment (examples)
+      ```powershell
+      cd client
+      npm install
+      cp .env.example .env.local  # optional
+      # Set VITE_API_URL to point at the backend (eg. http://localhost:5000/api)
+      npm run dev
+      ```
 
-   Backend `.env` (backend/.env):
+      Open your browser at the Vite dev server URL (usually `http://localhost:5173`).
 
-   ```
-   NODE_ENV=development
-   PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/project-management
-   JWT_SECRET=your_secret_key
-   JWT_EXPIRE=7d
-   ```
+      Environment variables (examples)
 
-   Frontend `.env.local` (client/.env.local):
+      backend/.env
 
-   ```
-   VITE_API_URL=http://localhost:5000/api
-   ```
+      ```
+      NODE_ENV=development
+      PORT=5000
+      MONGODB_URI=mongodb://localhost:27017/project-management
+      JWT_SECRET=your_secret_key
+      JWT_EXPIRE=7d
+      ```
 
-   ## Project Structure (high level)
+      client/.env.local
 
-   - `backend/` — Express API, models, controllers, services, validation, seeders
-   - `client/` — React + TypeScript app (Vite), components, pages, routes
+      ```
+      VITE_API_URL=http://localhost:5000/api
+      ```
 
-   See the folders for more details.
+      Core scripts you'll use
 
-   ## Scripts
+      - Backend: `npm run dev`, `npm run build`, `npm start`
+      - Frontend: `npm run dev`, `npm run build`
 
-   From `backend/`:
-   - `npm run dev` — start dev server (ts-node / nodemon)
-   - `npm run build` — compile TypeScript
-   - `npm start` — run compiled server
+      Notes & tips
+      - Check the `backend/src/seeders` folder to populate initial roles or test data.
+      - Authentication is implemented with JWT and supports OAuth providers — see `backend/src/config/passport.config.ts` for details.
+      - If you run into CORS or API URL issues, verify `VITE_API_URL` and backend `PORT`.
 
-   From `client/`:
-   - `npm run dev` — start Vite dev server
-   - `npm run build` — build production assets
+      Contributing
+      - Fork the repo, open a feature branch, and submit a PR. Keep changes focused and describe the intent in the PR.
+      - If you'd like, I can create a CI workflow, add a release tag, or add badges — tell me which you'd prefer.
 
-   ## Testing & Linting
+      Support
+      - For questions or help running the project, open an issue or reach out to the maintainers.
 
-   Check `package.json` files in each package for available test, lint, and format scripts.
+      License
+      - This project is proprietary.
 
-   ## Contributing
+      ## Ownership
 
-   - Fork the repo and create a feature branch
-   - Open a pull request with a clear description
-
-   If you want a release tag, CI, or a PR drafted from this change, tell me and I can create it.
-
-   ## License
-
-   Proprietary — please contact the maintainers for details.
-
-   ---
-
-   Updated README — focused quick-start and env examples.
+      This repository and all its contents are the sole property of Monish1801u1 (repository: Monish1801u1/Project_Management_Mern). © 2026 Monish1801u1. All rights reserved.
