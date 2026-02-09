@@ -1,171 +1,145 @@
-﻿# Project Management System (MERN)
+﻿# 📌 Project Management System — MERN Stack
 
-A comprehensive full-stack Project Management application built using the MERN (MongoDB, Express.js, React.js, Node.js) stack. This system enables teams to collaborate effectively on projects with features like workspace management, task tracking, discussions, and role-based access control.
+A full-stack **Project & Workspace Management Application** developed using the **MERN Stack (MongoDB, Express.js, React.js, Node.js) with TypeScript**.
 
-##  Table of Contents
-- [Tech Stack](#-tech-stack)
-- [Features](#-features)
-- [Prerequisites](#-prerequisites)
-- [Project Structure](#-project-structure)
-- [Installation & Setup](#-installation--setup)
-- [Running the Application](#-running-the-application)
-- [API Documentation](#-api-documentation)
+This project was built as part of practical learning and internship-level development to demonstrate real-world full-stack engineering skills including authentication, API development, role-based access, and scalable frontend architecture.
 
-##  Tech Stack
+The application helps teams organize workspaces, manage projects, track tasks, and collaborate efficiently within a centralized system.
 
-### Frontend
-- **React.js** - UI library
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite** - Fast build tool and dev server
+---
 
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web framework
-- **TypeScript** - Type safety
-- **MongoDB** - NoSQL database
-- **Passport.js** - Authentication middleware
 
-##  Features
+## 🎯 Project Objectives
 
-### Core Features
-- **User Authentication & Authorization** - Secure login with JWT and OAuth support
-- **Workspace Management** - Create and manage multiple workspaces
-- **Project Management** - Organize projects within workspaces
-- **Task Management** - Create, assign, and track tasks with status updates
-- **Team Collaboration** - Add team members and manage workspace invites
-- **Comments & Discussions** - Collaborate on tasks and projects with threaded discussions
-- **Activity Tracking** - Monitor all activities within workspace and projects
-- **Role-based Access Control** - Flexible permission system for different roles
+- Build a scalable full-stack web application
+- Implement secure authentication & authorization
+- Design modular backend architecture
+- Develop reusable frontend components
+- Demonstrate real-world MERN development practices
+- Understand full project lifecycle from setup to deployment
 
-### User Management
-- Account creation and management
-- Multiple account provider support
-- Member invitations and workspace assignments
-- Role and permission management
+---
 
-##  Prerequisites
+## ⚙️ Tech Stack
 
-- **Node.js** (v14.0.0 or higher)
-- **npm** or **yarn** package manager
-- **MongoDB** (v4.4 or higher) - Local or Atlas cluster
-- **Git** for version control
+### 🎨 Frontend
+- React.js
+- TypeScript
+- Tailwind CSS
+- Vite
+- React Context API
+- Custom Hooks
 
-##  Project Structure
+### 🧠 Backend
+- Node.js
+- Express.js
+- TypeScript
+- MongoDB with Mongoose
+- Passport.js Authentication
+- JWT Authorization
 
-```
+---
+
+## ✨ Features
+
+### 🔐 Authentication & Security
+- User Registration & Login
+- JWT Authentication
+- OAuth Login Integration
+- Protected API Routes
+- Role-Based Access Control
+
+### 🗂 Workspace & Project Management
+- Create & Manage Workspaces
+- Multiple Projects per Workspace
+- Member Invitations
+- Permission Management
+
+### ✅ Task Management
+- Task Creation & Assignment
+- Status Tracking
+- Activity Logging
+- Task Discussions & Comments
+
+### 👥 Team Collaboration
+- Workspace Member Roles
+- Activity Monitoring
+- Discussion Threads
+- Project Updates
+
+---
+
+## 📋 Prerequisites
+
+Before running the project, ensure you have:
+
+- Node.js (v14 or higher)
+- npm or yarn
+- MongoDB (Local or Atlas)
+- Git
+- Code Editor (VS Code recommended)
+
+---
+
+## 📂 Project Structure
+
 Project-Management/
- backend/
-    src/
-       @types/          # TypeScript type definitions
-       config/          # Configuration files (app, database, http, passport)
-       controllers/      # Route controllers
-       enums/           # Enum definitions
-       middlewares/      # Express middlewares
-       models/          # MongoDB models
-       routes/          # API routes
-       services/        # Business logic services
-       seeders/         # Database seeders
-       utils/           # Utility functions
-       validation/      # Input validation
-       index.ts         # Application entry point
-    tsconfig.json        # TypeScript configuration
-    package.json         # Dependencies
- client/
-    src/
-       components/      # Reusable React components
-       context/         # React context providers
-       hoc/             # Higher-order components
-       hooks/           # Custom React hooks
-       layout/          # Layout components
-       lib/             # Utility libraries
-       page/            # Page components
-       routes/          # Route definitions
-       types/           # TypeScript types
-       App.tsx          # Root component
-      ## Project Management (MERN)
+│
+├── backend/
+│   └── src/
+│       ├── config/
+│       ├── controllers/
+│       ├── middlewares/
+│       ├── models/
+│       ├── routes/
+│       ├── services/
+│       ├── utils/
+│       └── index.ts
+│
+└── client/
+    └── src/
+        ├── components/
+        ├── hooks/
+        ├── layout/
+        ├── pages/
+        ├── routes/
+        └── App.tsx
 
-      A simple, practical project and workspace management application built with the MERN stack (MongoDB, Express, React, Node) and TypeScript. Use this project as a starting point for internal team tools or as a learning reference for a full-stack TypeScript app.
+---
 
-      Why this repo?
-      - Focused feature set for small-to-medium teams: workspaces, projects, tasks, comments, members, and role-based permissions.
-      - Organized TypeScript codebase that separates API, services, and UI.
-      - Ready to run locally or deploy to a cloud provider with minor configuration.
+## 🚀 Installation & Setup
 
-      Repository layout (high level)
-      - `backend/` — Express API, TypeScript code, models, controllers, services, validation, and seeders.
-      - `client/` — Vite + React + TypeScript frontend, components, pages, and routes.
+### 🔧 Backend Setup
 
-      What you'll find here
-      - Workspace and project management features
-      - Task boards, calendars, and simple analytics
-      - Invitations and member management
-      - Role-based access control and activity logging
+cd backend npm install cp .env.example .env
 
-      Getting started (local development)
+Update .env file: NODE_ENV=development PORT=5000
+MONGODB_URI=mongodb://localhost:27017/project-management
+JWT_SECRET=your_secret_key JWT_EXPIRE=7d
 
-      1) Backend
+Start backend server: npm run dev
 
-      ```powershell
-      cd backend
-      npm install
-      cp .env.example .env   # create .env from template if present
-      # Edit .env and set MONGODB_URI and JWT_SECRET
-      npm run dev
-      ```
+Backend runs at: http://localhost:5000
 
-      The backend runs by default on port 5000 (see `backend/.env`).
+### 🎨 Frontend Setup
 
-      2) Frontend
+cd client npm install cp .env.example .env.local
 
-      ```powershell
-      cd client
-      npm install
-      cp .env.example .env.local  # optional
-      # Set VITE_API_URL to point at the backend (eg. http://localhost:5000/api)
-      npm run dev
-      ```
+Update environment variable: VITE_API_URL=http://localhost:5000/api
 
-      Open your browser at the Vite dev server URL (usually `http://localhost:5173`).
+Start frontend server: npm run dev
 
-      Environment variables (examples)
+Open browser: http://localhost:5173
 
-      backend/.env
+## 📜 Available Scripts
 
-      ```
-      NODE_ENV=development
-      PORT=5000
-      MONGODB_URI=mongodb://localhost:27017/project-management
-      JWT_SECRET=your_secret_key
-      JWT_EXPIRE=7d
-      ```
+Backend: npm run dev npm run build npm start
 
-      client/.env.local
+Frontend: npm run dev npm run build
 
-      ```
-      VITE_API_URL=http://localhost:5000/api
-      ```
+## 📄 License
 
-      Core scripts you'll use
+© 2026 Mukesh --- All Rights Reserved
 
-      - Backend: `npm run dev`, `npm run build`, `npm start`
-      - Frontend: `npm run dev`, `npm run build`
 
-      Notes & tips
-      - Check the `backend/src/seeders` folder to populate initial roles or test data.
-      - Authentication is implemented with JWT and supports OAuth providers — see `backend/src/config/passport.config.ts` for details.
-      - If you run into CORS or API URL issues, verify `VITE_API_URL` and backend `PORT`.
 
-      Contributing
-      - Fork the repo, open a feature branch, and submit a PR. Keep changes focused and describe the intent in the PR.
-      - If you'd like, I can create a CI workflow, add a release tag, or add badges — tell me which you'd prefer.
-
-      Support
-      - For questions or help running the project, open an issue or reach out to the maintainers.
-
-      License
-      - This project is proprietary.
-
-      ## Ownership
-
-      This repository and all its contents are the sole property of Monish1801u1 (repository: Monish1801u1/Project_Management_Mern). © 2026 Monish1801u1. All rights reserved.
