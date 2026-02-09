@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import useGetProjectsInWorkspaceQuery from "@/hooks/api/use-get-projects";
 import { Loader } from "lucide-react";
@@ -60,6 +61,11 @@ const RecentProjects = () => {
                   <div className="grid gap-1">
                     <p className="text-sm font-medium leading-none">
                       {project.name}
+                      {project.status && (
+                        <Badge variant="secondary" className="ml-2 text-[10px] h-5 px-1.5">
+                          {project.status.replace("_", " ")}
+                        </Badge>
+                      )}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {project.createdAt

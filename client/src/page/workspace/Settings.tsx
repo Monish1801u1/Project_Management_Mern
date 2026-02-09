@@ -53,12 +53,7 @@ const Settings = () => {
                   >
                     General
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="security"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 pb-3 pt-2"
-                  >
-                    Security
-                  </TabsTrigger>
+
                   <TabsTrigger
                     value="members"
                     className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 pb-3 pt-2"
@@ -152,13 +147,7 @@ const Settings = () => {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="security">
-                  <div className="p-6 border rounded-lg bg-card/50 glass-card">
-                    <h3 className="text-lg font-medium mb-2">Two-Factor Authentication</h3>
-                    <p className="text-sm text-muted-foreground mb-4">Add an extra layer of security to your account.</p>
-                    <Button variant="outline" disabled>Enable 2FA (Coming Soon)</Button>
-                  </div>
-                </TabsContent>
+
 
                 <TabsContent value="members">
                   <div className="p-6 border rounded-lg bg-card/50 glass-card flex flex-col items-center justify-center text-center py-12">

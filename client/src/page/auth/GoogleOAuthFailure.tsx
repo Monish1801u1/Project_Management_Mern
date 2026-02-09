@@ -1,36 +1,48 @@
-import Logo from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import AuthLayout from "@/components/auth/auth-layout";
 
 const GoogleOAuthFailure = () => {
   const navigate = useNavigate();
 
-  return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
-      <div className="flex w-full max-w-sm flex-col gap-6">
-        <Link
-          to="/"
-          className="flex items-center gap-2 self-center font-medium"
-        >
-          <Logo />
-          ZOHO
-        </Link>
-        <div className="flex flex-col gap-6"></div>
-      </div>
-      <Card>
-        <CardContent>
-          <div style={{ textAlign: "center", marginTop: "50px" }}>
-            <h1>Authentication Failed</h1>
-            <p>We couldn't sign you in with Google. Please try again.</p>
 
-            <Button onClick={() => navigate("/")} style={{ marginTop: "20px" }}>
-              Back to Login
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+  return (
+    <AuthLayout
+      title="Authentication Failed"
+      description="We couldn't sign you in with Google"
+    >
+      <div className="flex flex-col items-center justify-center gap-6 py-4">
+        <div className="rounded-full bg-red-500/10 p-4 border border-red-500/20">
+          <svg
+            className="h-10 w-10 text-red-500"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="m15 9-6 6" />
+            <path d="m9 9 6 6" />
+          </svg>
+        </div>
+
+        <p className="text-center text-muted-foreground text-sm max-w-xs">
+          Something went wrong during the authentication process. Please try again or use a different login method.
+        </p>
+
+        <Button
+          onClick={() => navigate("/")}
+          className="w-full h-11 text-base shadow-md hover:shadow-primary/20 transition-all font-medium"
+        >
+          Back to Login
+        </Button>
+      </div>
+    </AuthLayout>
   );
 };
 

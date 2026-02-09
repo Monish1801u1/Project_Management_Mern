@@ -52,111 +52,128 @@ em-emoji-picker {
 
 @layer base {
   :root {
-    /* Enforce dark theme colors by default due to dark gradient background */
-    --background: 220 30% 6%;
-    --foreground: 0 0% 100%; /* White text */
+    /* Main Background: Soft Cream / Warm White */
+    --background: 40 20% 99%; 
+    --foreground: 224 71.4% 4.1%; /* Deep Navy Black */
 
-    --card: 220 23% 11%;
-    --card-foreground: 0 0% 100%;
+    /* Card: Pure White with warm tint */
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
 
-    --popover: 220 23% 11%;
-    --popover-foreground: 0 0% 100%;
+    /* Popover: Matches Card */
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Primary: Royal Sunset (Deep Purple-Blue) */
+    --primary: 262.1 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Secondary: Warm Beige/Sand */
+    --secondary: 35 30% 96%;
+    --secondary-foreground: 220.9 39.3% 11%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Muted: Soft Warm Gray */
+    --muted: 35 20% 96%;
+    --muted-foreground: 220 8.9% 46.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Accent: Soft Gold/Peach Wash */
+    --accent: 35 30% 96%;
+    --accent-foreground: 220.9 39.3% 11%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive: Soft Red */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Border: Warm Mist */
+    --border: 220 13% 91%; /* Neutral to keep structure clean */
+    --input: 220 13% 91%;
+    --ring: 262.1 83.3% 57.8%; /* Matches Primary */
 
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    /* Radius */
+    --radius: 0.75rem; /* Slightly rounder for modern feel */
 
-    --radius: 0.5rem;
+    /* Chart Colors - Vibrant/Warm */
+    --chart-1: 262 83% 58%; /* Purple */
+    --chart-2: 35 90% 60%;  /* Golden Orange */
+    --chart-3: 173 58% 39%; /* Teal */
+    --chart-4: 340 75% 55%; /* Pink */
+    --chart-5: 200 80% 60%; /* Sky Blue */
 
-    /* Sidebar - Transparent/Glass */
-    --sidebar-background: 220 30% 6%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 212.7 26.8% 83.9%;
+    /* Sidebar: Frosted Warmth */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 262.1 83.3% 57.8%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 35 30% 96%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 262.1 83.3% 57.8%;
+
+    /* Light Mode Gradient: Warm Dawn */
+    --bg-gradient: radial-gradient(circle at 0% 0%, rgba(255, 182, 193, 0.15), transparent 30%), /* Soft Pink top left */
+                   radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.1), transparent 30%), /* Violet bottom right */
+                   #fffbf7; /* Warm base */
   }
 
   .dark {
-    /* Main Background: #0B0E14 (Deep Dark Blue) */
-    --background: 220 30% 6%;
-    --foreground: 0 0% 100%;
+    /* Main Background: Absolute Void */
+    --background: 240 10% 4%; 
+    --foreground: 0 0% 98%;
 
-    /* Card Background: #151921 (Lighter Dark Blue) */
-    --card: 220 23% 11%;
-    --card-foreground: 0 0% 100%;
+    /* Card: Deep Void Glass */
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 98%;
 
-    /* Popover matches Card */
-    --popover: 220 23% 11%;
-    --popover-foreground: 0 0% 100%;
+    /* Popover: Matches Card */
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Primary: #6366F1 (Indigo 500) - Vibrant Blue/Purple */
-    --primary: 244 75% 60%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary: Neon Electric Violet */
+    --primary: 263 75% 60%;
+    --primary-foreground: 210 40% 98%;
 
-    /* Secondary: Slightly lighter than card */
-    --secondary: 220 20% 16%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary: Deep Night */
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
 
-    /* Muted */
-    --muted: 220 20% 16%;
-    --muted-foreground: 215 16% 47%;
+    /* Muted: Starlight Gray */
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
 
-    /* Accent */
-    --accent: 220 20% 16%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent: Neon Cyan Wash */
+    --accent: 263 75% 60%; 
+    --accent-foreground: 210 40% 98%;
 
-    /* Destructive */
-    --destructive: 0 84.2% 60.2%;
+    /* Destructive: Neon Red */
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    /* Border: #2A303C (Subtle) */
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 244 75% 60%;
+    /* Border: Translucent Galaxy */
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
+    --ring: 263 75% 60%;
 
-    /* Chart Colors */
-    --chart-1: 244 75% 60%;
-    /* Primary Indigo */
-    --chart-2: 160 84% 39%;
-    /* Success Green */
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* Chart Colors - Neon Cyberpunk */
+    --chart-1: 263 75% 60%; /* Neon Violet */
+    --chart-2: 180 100% 50%; /* Cyan */
+    --chart-3: 300 100% 60%; /* Magenta */
+    --chart-4: 50 100% 60%;  /* Neon Yellow */
+    --chart-5: 10 100% 65%;  /* Neon Orange */
 
-    /* Sidebar: Matches Main Background */
-    --sidebar-background: 220 30% 6%;
-    --sidebar-foreground: 215 16% 70%;
-    --sidebar-primary: 244 75% 60%;
+    /* Sidebar: Void Glass */
+    --sidebar-background: 240 10% 4%;
+    --sidebar-foreground: 240 5% 96%;
+    --sidebar-primary: 263 75% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 23% 11%;
-    /* Card Color */
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 220 15% 13%;
-    --sidebar-ring: 244 75% 60%;
+    --sidebar-accent: 240 4% 16%;
+    --sidebar-accent-foreground: 240 5% 96%;
+    --sidebar-border: 240 4% 16%;
+    --sidebar-ring: 263 75% 60%;
+
+    /* Dark Mode Gradient Variable: Nebula */
+    --bg-gradient: radial-gradient(circle at 10% 20%, rgba(76, 29, 149, 0.3), transparent 40%), /* Violet Nebula */
+                   radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.15), transparent 40%), /* Cyan Star-field */
+                   #09090b; /* Deep Void base */
   }
 }
 
@@ -201,14 +218,9 @@ em-emoji-picker {
 
 /* Global Background Gradient */
 body {
-  background: radial-gradient(circle at 0% 0%, #3b82f6 0%, transparent 50%), 
-              radial-gradient(circle at 100% 0%, #06b6d4 0%, transparent 50%), 
-              radial-gradient(circle at 100% 100%, #8b5cf6 0%, transparent 50%), 
-              radial-gradient(circle at 0% 100%, #ec4899 0%, transparent 50%),
-              #0f172a; /* Fallback base color */
+  background: var(--bg-gradient);
   background-attachment: fixed;
-  background-size: 200% 200%;
-  animation: gradient-move 20s ease infinite;
+  background-size: 100% 100%;
 }
 
 @keyframes gradient-move {

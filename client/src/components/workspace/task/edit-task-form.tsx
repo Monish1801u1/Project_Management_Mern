@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { format } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { CalendarIcon, Loader } from "lucide-react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { CalendarIcon, Loader, Plus, Trash } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -34,6 +34,7 @@ import { editTaskMutationFn } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { TaskType } from "@/types/api.type";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export default function EditTaskForm({ task, onClose }: { task: TaskType; onClose: () => void }) {
   const queryClient = useQueryClient();
@@ -68,10 +69,17 @@ export default function EditTaskForm({ task, onClose }: { task: TaskType; onClos
     description: z.string().trim(),
     status: z.enum(Object.values(TaskStatusEnum) as [keyof typeof TaskStatusEnum]),
     priority: z.enum(Object.values(TaskPriorityEnum) as [keyof typeof TaskPriorityEnum]),
-    assignedTo: z.string().trim().min(1, { message: "AssignedTo is required" }),
+    assignedTo: z.array(z.string()).min(1, { message: "Assign at least one member" }),
     dueDate: z.date({ required_error: "A due date is required." }),
     cost: z.number().min(0).optional(),
     isMilestone: z.boolean().optional(),
+    subtasks: z.array(
+      z.object({
+        _id: z.string().optional(),
+        title: z.string().min(1, "Title required"),
+        completed: z.boolean().default(false),
+      })
+    ).optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -81,11 +89,17 @@ export default function EditTaskForm({ task, onClose }: { task: TaskType; onClos
       description: task?.description ?? "",
       status: task?.status ?? "TODO",
       priority: task?.priority ?? "MEDIUM",
-      assignedTo: task.assignedTo?._id ?? "",
+      assignedTo: task.assignedTo ? task.assignedTo.map((m) => m._id) : [],
       dueDate: task?.dueDate ? new Date(task.dueDate) : new Date(),
       cost: task?.cost ?? 0,
       isMilestone: task?.isMilestone ?? false,
+      subtasks: task?.subtasks ?? [],
     },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "subtasks",
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -124,9 +138,7 @@ export default function EditTaskForm({ task, onClose }: { task: TaskType; onClos
   return (
     <div className="w-full h-auto max-w-full">
       <div className="h-full">
-        <div className="mb-5 pb-2 border-b">
-          <h1 className="text-xl font-semibold text-center sm:text-left">Edit Task</h1>
-        </div>
+
         <Form {...form}>
           <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
             {/* Title */}
@@ -151,16 +163,11 @@ export default function EditTaskForm({ task, onClose }: { task: TaskType; onClos
             <FormField control={form.control} name="assignedTo" render={({ field }) => (
               <FormItem>
                 <FormLabel>Assigned To</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
-                  <FormControl><SelectTrigger><SelectValue placeholder="Select an assignee" /></SelectTrigger></FormControl>
-                  <SelectContent>
-                    <div className="w-full max-h-[200px] overflow-y-auto scrollbar">
-                      {membersOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                      ))}
-                    </div>
-                  </SelectContent>
-                </Select>
+                <MultiSelect
+                  options={membersOptions}
+                  selected={field.value}
+                  setSelected={field.onChange}
+                />
                 <FormMessage />
               </FormItem>
             )} />
@@ -262,6 +269,59 @@ export default function EditTaskForm({ task, onClose }: { task: TaskType; onClos
                     </FormItem>
                   )}
                 />
+              </div>
+            </div>
+
+            {/* Subtasks Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <FormLabel>Checklist (Subtasks)</FormLabel>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ title: "", completed: false })}
+                >
+                  <Plus className="w-3 h-3 mr-1" /> Add Item
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {fields.map((field, index) => (
+                  <div key={field.id} className="flex items-center gap-2">
+                    <FormField
+                      control={form.control}
+                      name={`subtasks.${index}.completed`}
+                      render={({ field }) => (
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={field.onChange}
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`subtasks.${index}.title`}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          placeholder="Subtask title"
+                          className="h-8 text-sm"
+                        />
+                      )}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash className="w-3 h-3" />
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
 

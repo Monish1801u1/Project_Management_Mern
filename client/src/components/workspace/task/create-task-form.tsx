@@ -41,6 +41,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createTaskMutationFn } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
+import { MultiSelect } from "@/components/ui/multi-select";
 
 export default function CreateTaskForm(props: {
   projectId?: string;
@@ -118,11 +119,11 @@ export default function CreateTaskForm(props: {
         required_error: "Priority is required",
       }
     ),
-    assignedTo: z.string().trim().min(1, {
-      message: "AssignedTo is required",
+    assignedTo: z.array(z.string()).min(1, {
+      message: "Assign at least one member",
     }),
     dueDate: z.date({
-      required_error: "A date of birth is required.",
+      required_error: "Due date is required.",
     }),
     cost: z.number().min(0).optional(),
     isMilestone: z.boolean().optional(),
@@ -136,6 +137,7 @@ export default function CreateTaskForm(props: {
       projectId: projectId ? projectId : "",
       cost: 0,
       isMilestone: false,
+      assignedTo: [],
     },
   });
 
@@ -186,17 +188,6 @@ export default function CreateTaskForm(props: {
   return (
     <div className="w-full h-auto max-w-full">
       <div className="h-full">
-        <div className="mb-5 pb-2 border-b">
-          <h1
-            className="text-xl tracking-[-0.16px] dark:text-[#fcfdffef] font-semibold mb-1
-           text-center sm:text-left"
-          >
-            Create Task
-          </h1>
-          <p className="text-muted-foreground text-sm leading-tight">
-            Organize and manage tasks, resources, and team collaboration
-          </p>
-        </div>
         <Form {...form}>
           <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
             <div>
@@ -253,38 +244,45 @@ export default function CreateTaskForm(props: {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Project</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a project" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {isLoading && (
-                            <div className="my-2">
-                              <Loader className="w-4 h-4 place-self-center flex animate-spin" />
+                      {projects.length > 0 ? (
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a project" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {isLoading && (
+                              <div className="my-2">
+                                <Loader className="w-4 h-4 place-self-center flex animate-spin" />
+                              </div>
+                            )}
+                            <div
+                              className="w-full max-h-[200px]
+                            overflow-y-auto scrollbar
+                           "
+                            >
+                              {projectOptions?.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  className="!capitalize cursor-pointer"
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
                             </div>
-                          )}
-                          <div
-                            className="w-full max-h-[200px]
-                           overflow-y-auto scrollbar
-                          "
-                          >
-                            {projectOptions?.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                className="!capitalize cursor-pointer"
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </div>
-                        </SelectContent>
-                      </Select>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <div className="flex flex-col gap-1 p-3 border border-dashed rounded-md bg-muted/50">
+                          <span className="text-sm text-muted-foreground text-center">No projects found.</span>
+                          <span className="text-xs text-center text-muted-foreground">You need to create a project before adding tasks.</span>
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -301,33 +299,12 @@ export default function CreateTaskForm(props: {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assigned To</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a assignee" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <div
-                          className="w-full max-h-[200px]
-                           overflow-y-auto scrollbar
-                          "
-                        >
-                          {membersOptions?.map((option) => (
-                            <SelectItem
-                              className="cursor-pointer"
-                              key={option.value}
-                              value={option.value}
-                            >
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </div>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Assigned To</FormLabel>
+                    <MultiSelect
+                      options={membersOptions || []}
+                      selected={field.value}
+                      setSelected={field.onChange}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -342,11 +319,12 @@ export default function CreateTaskForm(props: {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Due Date</FormLabel>
-                    <Popover>
+                    <Popover modal={true}>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
                             variant={"outline"}
+                            type="button"
                             className={cn(
                               "w-full flex-1 pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"

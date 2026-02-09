@@ -15,11 +15,12 @@ export interface TaskDocument extends Document {
   workspace: mongoose.Types.ObjectId;
   status: TaskStatusEnumType;
   priority: TaskPriorityEnumType;
-  assignedTo: mongoose.Types.ObjectId | null;
+  assignedTo: mongoose.Types.ObjectId[];
   createdBy: mongoose.Types.ObjectId;
   dueDate: Date | null;
   isMilestone: boolean;
   cost: number;
+  subtasks: { title: string; completed: boolean; _id: string }[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,7 +54,7 @@ const taskSchema = new Schema<TaskDocument>(
     },
     status: {
       type: String,
-      enum: Object.values(TaskStatusEnum),
+      required: true,
       default: TaskStatusEnum.TODO,
     },
     priority: {
@@ -69,11 +70,12 @@ const taskSchema = new Schema<TaskDocument>(
       type: Number,
       default: 0,
     },
-    assignedTo: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
+    assignedTo: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -83,9 +85,23 @@ const taskSchema = new Schema<TaskDocument>(
       type: Date,
       default: null,
     },
+    subtasks: [
+      {
+        title: {
+          type: String,
+          required: true,
+        },
+        completed: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 

@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import CreateTaskForm from "./create-task-form";
 
@@ -24,6 +24,12 @@ const CreateTaskDialog = (props: { projectId?: string; hideTrigger?: boolean }) 
           </DialogTrigger>
         )}
         <DialogContent className="sm:max-w-lg max-h-auto my-5 border-0">
+          <DialogHeader>
+            <DialogTitle>Create Task</DialogTitle>
+            <DialogDescription>
+              Organize and manage tasks, resources, and team collaboration
+            </DialogDescription>
+          </DialogHeader>
           <CreateTaskForm projectId={props.projectId} onClose={onClose} />
         </DialogContent>
       </Dialog>

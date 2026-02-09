@@ -10,6 +10,7 @@ import { Permissions } from "@/constant";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
 
 const ProjectHeader = () => {
   const param = useParams();
@@ -51,6 +52,11 @@ const ProjectHeader = () => {
       <div className="flex items-center gap-2">
         <h2 className="flex items-center gap-3 text-xl font-medium truncate tracking-tight">
           {renderContent()}
+          {project?.status && (
+            <Badge variant="outline" className="text-xs font-normal">
+              {project.status.replace("_", " ")}
+            </Badge>
+          )}
         </h2>
         <PermissionsGuard requiredPermission={Permissions.EDIT_PROJECT}>
           <Button variant="ghost" size="icon" onClick={() => navigate(`/workspace/${workspaceId}/project/${projectId}/settings`)}>

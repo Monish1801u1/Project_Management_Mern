@@ -9,6 +9,9 @@ import {
 import AppLayout from "@/layout/app.layout";
 import BaseLayout from "@/layout/base.layout";
 import NotFound from "@/page/errors/NotFound";
+import PublicWorkspaceLayout from "@/layout/PublicWorkspaceLayout";
+import SharedWorkspace from "@/page/public/SharedWorkspace";
+import SharedProjectDetails from "@/page/public/SharedProjectDetails";
 
 function AppRoutes() {
   return (
@@ -43,6 +46,15 @@ function AppRoutes() {
           ))}
         </Route>
       </Route>
+
+      // ... imports
+
+      {/* Public Shared Route */}
+      <Route path="/shared/:code" element={<PublicWorkspaceLayout />}>
+        <Route index element={<SharedWorkspace />} />
+        <Route path="project/:projectId" element={<SharedProjectDetails />} />
+      </Route>
+
       {/* Catch-all for undefined routes */}
       <Route path="*" element={<NotFound />} />
     </Routes>

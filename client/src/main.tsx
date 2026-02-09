@@ -10,6 +10,7 @@ import { Toaster } from "./components/ui/toaster.tsx";
 
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { AuthProvider } from "./context/auth-provider.tsx";
+import { ThemeCustomizerProvider } from "./context/theme-customizer-provider.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,7 +19,9 @@ createRoot(document.getElementById("root")!).render(
         <NuqsAdapter>
           <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <AuthProvider>
-              <App />
+              <ThemeCustomizerProvider>
+                <App />
+              </ThemeCustomizerProvider>
             </AuthProvider>
           </ThemeProvider>
         </NuqsAdapter>

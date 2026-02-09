@@ -14,6 +14,15 @@ export const TaskPriorityEnum = {
 export type TaskStatusEnumType = keyof typeof TaskStatusEnum;
 export type TaskPriorityEnumType = keyof typeof TaskPriorityEnum;
 
+export const ProjectStatusEnum = {
+  PLANNING: "PLANNING",
+  IN_PROGRESS: "IN_PROGRESS",
+  COMPLETED: "COMPLETED",
+  ON_HOLD: "ON_HOLD",
+} as const;
+
+export type ProjectStatusEnumType = keyof typeof ProjectStatusEnum;
+
 export const Permissions = {
   CREATE_WORKSPACE: "CREATE_WORKSPACE",
   DELETE_WORKSPACE: "DELETE_WORKSPACE",

@@ -10,21 +10,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../../ui/textarea";
 import EmojiPickerComponent from "@/components/emoji-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ProjectStatusEnum } from "@/constant";
 import { ProjectType } from "@/types/api.type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { editProjectMutationFn } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Loader } from "lucide-react";
+import useGetWorkspaceMembers from "@/hooks/api/use-get-workspace-members";
 
 export default function EditProjectForm(props: {
   project?: ProjectType;
@@ -43,6 +48,7 @@ export default function EditProjectForm(props: {
       message: "Project title is required",
     }),
     description: z.string().trim(),
+    status: z.enum(["PLANNING", "IN_PROGRESS", "COMPLETED", "ON_HOLD"]).optional(),
   });
 
   const { mutate, isPending } = useMutation({
@@ -57,11 +63,20 @@ export default function EditProjectForm(props: {
     },
   });
 
+
+
+  const { data: membersData } = useGetWorkspaceMembers(workspaceId);
+  const workspaceMembers = membersData?.members || [];
+
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
   useEffect(() => {
     if (project) {
       setEmoji(project.emoji);
       form.setValue("name", project.name);
       form.setValue("description", project.description);
+      form.setValue("status", project.status);
+      setSelectedMembers(project.members || []);
     }
   }, [form, project]);
 
@@ -69,12 +84,20 @@ export default function EditProjectForm(props: {
     setEmoji(emoji);
   };
 
+  const handleMemberToggle = (memberId: string) => {
+    setSelectedMembers((prev) =>
+      prev.includes(memberId)
+        ? prev.filter((id) => id !== memberId)
+        : [...prev, memberId]
+    );
+  };
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (isPending) return;
     const payload = {
       projectId,
       workspaceId,
-      data: { emoji, ...values },
+      data: { emoji, members: selectedMembers, ...values },
     };
     mutate(payload, {
       onSuccess: (data) => {
@@ -107,36 +130,20 @@ export default function EditProjectForm(props: {
   return (
     <div className="w-full h-auto max-w-full">
       <div className="h-full">
-        <div className="mb-5 pb-2 border-b">
-          <h1
-            className="text-xl tracking-[-0.16px] dark:text-[#fcfdffef] font-semibold mb-1
-           text-center sm:text-left"
-          >
-            Edit Project
-          </h1>
-          <p className="text-muted-foreground text-sm leading-tight">
-            Update the project details to refine task management
-          </p>
-        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Select Emoji
               </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="font-normal size-[60px] !p-2 !shadow-none mt-2 items-center rounded-full "
-                  >
-                    <span className="text-4xl">{emoji}</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className=" !p-0">
-                  <EmojiPickerComponent onSelectEmoji={handleEmojiSelection} />
-                </PopoverContent>
-              </Popover>
+              <EmojiPickerComponent onSelectEmoji={handleEmojiSelection}>
+                <Button
+                  variant="outline"
+                  className="font-normal size-[60px] !p-2 !shadow-none mt-2 items-center rounded-full "
+                >
+                  <span className="text-4xl">{emoji}</span>
+                </Button>
+              </EmojiPickerComponent>
             </div>
             <div className="mb-4">
               <FormField
@@ -178,6 +185,86 @@ export default function EditProjectForm(props: {
                   </FormItem>
                 )}
               />
+            </div>
+
+            <div className="mb-4">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                      Status
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(ProjectStatusEnum).map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status.replace("_", " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Members
+              </label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {selectedMembers.map((memberId) => {
+                  const member = workspaceMembers.find(
+                    (m) => m.userId._id === memberId
+                  );
+                  return (
+                    <div
+                      key={memberId}
+                      className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm"
+                    >
+                      <span>{member?.userId.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleMemberToggle(memberId)}
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="border rounded-md p-2 max-h-40 overflow-y-auto">
+                {workspaceMembers.map((member) => (
+                  <div
+                    key={member.userId._id}
+                    className="flex items-center gap-2 p-1 hover:bg-secondary/50 cursor-pointer rounded"
+                    onClick={() => handleMemberToggle(member.userId._id)}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedMembers.includes(member.userId._id)}
+                      readOnly
+                      className="pointer-events-none"
+                    />
+                    <span className="text-sm">{member.userId.name}</span>
+                    <span className="text-xs text-muted-foreground ml-auto">
+                      {member.role.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <Button

@@ -42,4 +42,5 @@ export const RolePermissions: Record<RoleType, Array<PermissionType>> = {
     Permissions.CREATE_TASK,
     Permissions.EDIT_TASK,
   ],
+  CLIENT: [Permissions.VIEW_ONLY],
 };

@@ -55,15 +55,14 @@ app.use(
 app.get(
   `/`,
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    throw new BadRequestException(
-      "This is a bad request",
-      ErrorCodeEnum.AUTH_INVALID_TOKEN
-    );
+
     return res.status(HTTPSTATUS.OK).json({
       message: "Hello Subscribe to the channel & share",
     });
   })
 );
+
+import publicRoutes from "./routes/public.route";
 
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, isAuthenticated, userRoutes);
@@ -71,6 +70,7 @@ app.use(`${BASE_PATH}/workspace`, isAuthenticated, workspaceRoutes);
 app.use(`${BASE_PATH}/member`, isAuthenticated, memberRoutes);
 app.use(`${BASE_PATH}/project`, isAuthenticated, projectRoutes);
 app.use(`${BASE_PATH}/task`, isAuthenticated, taskRoutes);
+app.use(`${BASE_PATH}/public`, publicRoutes); // Public access, no auth middleware needed for the router itself (middleware inside if needed, but here we want open access)
 app.use(`${BASE_PATH}/comment`, isAuthenticated, commentRoutes);
 app.use(`${BASE_PATH}/activity`, isAuthenticated, activityRoutes);
 app.use(`${BASE_PATH}/search`, isAuthenticated, searchRoutes);

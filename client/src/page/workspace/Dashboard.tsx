@@ -9,6 +9,9 @@ import { ActivityFeed } from "@/components/workspace/activity/activity-feed";
 import RecentMembers from "@/components/workspace/member/recent-members";
 import { useEffect, useState } from "react";
 import { TiltCard } from "@/components/ui/tilt-card";
+import ClientDashboard from "./ClientDashboard";
+import { useAuthContext } from "@/context/auth-provider";
+import useGetWorkspaceMembers from "@/hooks/api/use-get-workspace-members";
 
 const GlassWidget = ({ children, className = "", title }: { children: React.ReactNode; className?: string; title?: string }) => (
   <TiltCard className={className}>
@@ -29,7 +32,7 @@ const ClockWidget = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center space-y-2">
-      <div className="text-5xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+      <div className="text-5xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500 animate-pulse">
         {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
       </div>
       <div className="text-lg text-muted-foreground font-medium">
@@ -42,18 +45,27 @@ const ClockWidget = () => {
 const WorkspaceDashboard = () => {
   const workspaceId = useWorkspaceId();
   const { onOpen } = useCreateProjectDialog();
+  const { user } = useAuthContext();
+
+  const { data: membersData } = useGetWorkspaceMembers(workspaceId);
+  const currentMember = membersData?.members?.find(m => m.userId._id === user?._id);
+  const isClient = currentMember?.role?.name === "CLIENT";
+
+  if (isClient) {
+    return <ClientDashboard />;
+  }
 
   return (
     <main className="flex flex-1 flex-col py-4 md:pt-3 space-y-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+          <h2 className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500">
             Mission Control
           </h2>
           <p className="text-muted-foreground">Overview for this workspace</p>
         </div>
-        <Button onClick={onOpen} className="glass border-primary/20 hover:bg-primary/20 text-foreground transition-all">
+        <Button onClick={onOpen} className="glass border-primary/20 hover:bg-primary/20 text-foreground transition-all shadow-lg hover:shadow-primary/25">
           <Plus className="mr-2 h-4 w-4" /> New Project
         </Button>
       </div>

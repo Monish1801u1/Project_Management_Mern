@@ -4,15 +4,8 @@ import { format, differenceInDays } from "date-fns";
 import { DataTableColumnHeader } from "./table-column-header";
 import { DataTableRowActions } from "./table-row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
+
 import {
-  TaskPriorityEnum,
-  TaskPriorityEnumType,
-  TaskStatusEnum,
-  TaskStatusEnumType,
-} from "@/constant";
-import {
-  formatStatusToEnum,
   getAvatarColor,
   getAvatarFallbackText,
 } from "@/lib/helper";
@@ -54,7 +47,7 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
       cell: ({ row }) => {
         return (
           <div className="flex flex-col space-y-1">
-            <span className="font-medium text-[14px] text-gray-700 truncate  lg:max-w-[280px] max-w-[200px]">
+            <span className="font-medium text-[14px] text-gray-700 dark:text-gray-200 truncate  lg:max-w-[280px] max-w-[200px]">
               {row.original.title}
             </span>
             <span className="text-[10px] text-muted-foreground uppercase">{row.original.taskCode}</span>
@@ -75,7 +68,7 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
             if (!project) return <span className="text-xs text-muted-foreground">Not Associated</span>;
             return (
               <div className="flex items-center gap-1">
-                <span className="text-xs text-gray-600">{project.name}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">{project.name}</span>
               </div>
             );
           },
@@ -87,23 +80,30 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
         <DataTableColumnHeader column={column} title="OWNER" />
       ),
       cell: ({ row }) => {
-        const assignee = row.original.assignedTo || null;
-        const name = assignee?.name || "Unassigned";
+        const assignees = row.original.assignedTo || [];
 
-        if (!assignee) return <span className="text-xs text-muted-foreground">Unassigned</span>;
-
-        const initials = getAvatarFallbackText(name);
-        const avatarColor = getAvatarColor(name);
+        if (assignees.length === 0) return <span className="text-xs text-muted-foreground">Unassigned</span>;
 
         return (
-          <div className="flex items-center gap-2" title={name}>
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={assignee?.profilePicture || ""} alt={name} />
-              <AvatarFallback className={`${avatarColor} text-[9px]`}>
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-xs truncate max-w-[100px]">{name}</span>
+          <div className="flex -space-x-2 overflow-hidden items-center group">
+            {assignees.slice(0, 3).map((assignee) => {
+              const name = assignee.name;
+              const initials = getAvatarFallbackText(name);
+              const avatarColor = getAvatarColor(name);
+              return (
+                <Avatar key={assignee._id} className="h-6 w-6 border-2 border-white dark:border-gray-900 z-10 hover:z-20 transition-all cursor-pointer" title={name}>
+                  <AvatarImage src={assignee.profilePicture || ""} alt={name} />
+                  <AvatarFallback className={`${avatarColor} text-[9px]`}>
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              );
+            })}
+            {assignees.length > 3 && (
+              <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[9px] border-2 border-white dark:border-gray-900 z-10" title={`+${assignees.length - 3} more`}>
+                +{assignees.length - 3}
+              </div>
+            )}
           </div>
         );
       },
@@ -120,9 +120,9 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
         if (!status) return null;
 
         // Custom styling for Zoho look (pill)
-        const colorClass = status.value === 'DONE' ? 'bg-green-100 text-green-700 hover:bg-green-200' :
-          status.value === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' :
-            'bg-gray-100 text-gray-700 hover:bg-gray-200';
+        const colorClass = status.value === 'DONE' ? 'bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300' :
+          status.value === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300' :
+            'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300';
 
         return (
           <div className="flex items-center">
@@ -154,7 +154,7 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
         }
 
         return (
-          <span className="text-xs text-center text-gray-600">
+          <span className="text-xs text-center text-gray-600 dark:text-gray-400">
             {diff}
           </span>
         );
@@ -180,7 +180,7 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
         }
 
         return (
-          <span className="text-xs text-gray-600">
+          <span className="text-xs text-gray-600 dark:text-gray-400">
             {duration}
           </span>
         );
@@ -202,7 +202,7 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
         return (
           <div className="flex items-center gap-1.5">
             {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />}
-            <span className="text-xs font-medium text-gray-600">{priority.label}</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{priority.label}</span>
           </div>
         );
       },
@@ -212,9 +212,9 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="CREATED BY" />
       ),
-      cell: ({ row }) => {
+      cell: () => {
         // Using createdBy if it were populated, else Owner or me
-        return <span className="text-xs text-gray-500">System</span>
+        return <span className="text-xs text-gray-500 dark:text-gray-400">System</span>
       }
     },
     {

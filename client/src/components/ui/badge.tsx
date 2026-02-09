@@ -16,15 +16,15 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
-        [TaskStatusEnum.BACKLOG]: "bg-gray-100 text-gray-600",
-        [TaskStatusEnum.TODO]: "  bg-[#DEEBFF] text-[#0052CC]",
-        [TaskStatusEnum.IN_PROGRESS]: "bg-yellow-100 text-yellow-600",
-        [TaskStatusEnum.IN_REVIEW]: "bg-purple-100 text-purple-500",
-        [TaskStatusEnum.DONE]: "bg-green-100 text-green-600",
-        [TaskPriorityEnum.HIGH]: "bg-orange-100 text-orange-600",
-        [TaskPriorityEnum.URGENT]: "bg-red-100 text-red-600",
-        [TaskPriorityEnum.MEDIUM]: "bg-yellow-100 text-yellow-600",
-        [TaskPriorityEnum.LOW]: "bg-gray-100 text-gray-600",
+        [TaskStatusEnum.BACKLOG]: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+        [TaskStatusEnum.TODO]: "bg-[#DEEBFF] text-[#0052CC] dark:bg-blue-900/40 dark:text-blue-300",
+        [TaskStatusEnum.IN_PROGRESS]: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-400",
+        [TaskStatusEnum.IN_REVIEW]: "bg-purple-100 text-purple-500 dark:bg-purple-900/40 dark:text-purple-300",
+        [TaskStatusEnum.DONE]: "bg-green-100 text-green-600 dark:bg-green-900/40 dark:text-green-400",
+        [TaskPriorityEnum.HIGH]: "bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-400",
+
+        [TaskPriorityEnum.MEDIUM]: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/40 dark:text-yellow-400",
+        [TaskPriorityEnum.LOW]: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
       },
     },
     defaultVariants: {
@@ -35,7 +35,7 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+  VariantProps<typeof badgeVariants> { }
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (

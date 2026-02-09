@@ -72,7 +72,7 @@ The Project Management System is a full-stack web application that enables teams
 - **Package Manager**: npm
 - **Build Tools**: Vite (Frontend), TypeScript Compiler (Backend)
 - **Version Control**: Git
-- **API Testing**: Postman/Insomnia compatible
+- **API Testing**: Postman compatible
 
 ---
 

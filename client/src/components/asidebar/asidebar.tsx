@@ -45,19 +45,23 @@ const Asidebar = () => {
 
   return (
     <>
-      <Sidebar collapsible="icon" variant="floating" className="border-r-0 bg-transparent text-sidebar-foreground glass-sidebar border-none shadow-none [&>div]:bg-transparent">
-        <SidebarHeader className="!py-0 bg-transparent text-sidebar-foreground">
-          <div className="flex h-[50px] items-center justify-start w-full px-1">
-            <Logo url={`/workspace/${workspaceId}`} />
+      <Sidebar collapsible="icon" variant="floating" className="border-r border-white/10 bg-gradient-to-b from-background/80 to-background/40 backdrop-blur-2xl text-sidebar-foreground shadow-2xl transition-all duration-300 hover:bg-background/90 group/sidebar">
+        <SidebarHeader className="py-4 bg-transparent text-sidebar-foreground mb-2">
+          <div className="flex items-center justify-start w-full px-2 gap-2 transition-all duration-300 group-data-[collapsible=icon]/sidebar:justify-center">
+            <div className="p-1 rounded-lg bg-primary/10 group-data-[collapsible=icon]/sidebar:p-0 group-data-[collapsible=icon]/sidebar:bg-transparent">
+              <Logo url={`/workspace/${workspaceId}`} />
+            </div>
             {open && (
               <Link
                 to={`/workspace/${workspaceId}`}
-                className="hidden md:flex ml-2 items-center gap-2 self-center font-medium"
+                className="hidden md:flex flex-col justify-center"
               >
-                ZOHO
+                <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500 animate-pulse tracking-wide">
+                  Aura
+                </span>
+                <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Workspace</span>
               </Link>
             )}
-
           </div>
         </SidebarHeader>
         <SidebarContent className="!mt-0 bg-transparent text-sidebar-foreground">

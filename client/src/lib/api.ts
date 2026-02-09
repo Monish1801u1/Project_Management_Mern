@@ -364,3 +364,67 @@ export const getWorkspaceDiscussionsQueryFn = async (workspaceId: string) => {
   const response = await API.get(`/discussion/workspace/${workspaceId}/all`);
   return response.data;
 };
+
+// ********** PUBLIC ACCESS **********
+export const getPublicWorkspaceQueryFn = async (code: string) => {
+  const response = await API.get(`/public/workspace/${code}`);
+  return response.data;
+};
+
+export const getPublicProjectsQueryFn = async ({
+  code,
+  pageNumber = 1,
+  pageSize = 10,
+}: {
+  code: string;
+  pageNumber?: number;
+  pageSize?: number;
+}) => {
+  const response = await API.get(
+    `/public/workspace/${code}/projects?pageNumber=${pageNumber}&pageSize=${pageSize}`
+  );
+  return response.data;
+};
+
+export const getPublicProjectQueryFn = async ({
+  code,
+  projectId,
+}: {
+  code: string;
+  projectId: string;
+}) => {
+  const response = await API.get(
+    `/public/workspace/${code}/project/${projectId}`
+  );
+  return response.data;
+};
+
+export const getPublicProjectTasksQueryFn = async ({
+  code,
+  projectId,
+  pageNumber = 1,
+  pageSize = 10,
+  status,
+  priority,
+  keyword,
+}: {
+  code: string;
+  projectId: string;
+  pageNumber?: number;
+  pageSize?: number;
+  status?: string;
+  priority?: string;
+  keyword?: string;
+}) => {
+  const queryParams = new URLSearchParams();
+  if (keyword) queryParams.append("keyword", keyword);
+  if (priority) queryParams.append("priority", priority);
+  if (status) queryParams.append("status", status);
+  if (pageNumber) queryParams.append("pageNumber", pageNumber.toString());
+  if (pageSize) queryParams.append("pageSize", pageSize.toString());
+
+  const response = await API.get(
+    `/public/workspace/${code}/project/${projectId}/tasks?${queryParams.toString()}`
+  );
+  return response.data;
+};

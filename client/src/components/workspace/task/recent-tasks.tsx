@@ -51,9 +51,6 @@ const RecentTasks = () => {
 
       <ul role="list" className="divide-y divide-gray-200">
         {tasks.map((task) => {
-          const name = task?.assignedTo?.name || "";
-          const initials = getAvatarFallbackText(name);
-          const avatarColor = getAvatarColor(name);
           return (
             <li
               key={task._id}
@@ -93,16 +90,26 @@ const RecentTasks = () => {
               </div>
 
               {/* Assignee */}
-              <div className="flex items-center space-x-2 ml-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={task.assignedTo?.profilePicture || ""}
-                    alt={task.assignedTo?.name}
-                  />
-                  <AvatarFallback className={avatarColor}>
-                    {initials}
-                  </AvatarFallback>
-                </Avatar>
+              <div className="flex items-center space-x-2 ml-2 min-w-[80px] justify-end">
+                {task.assignedTo && task.assignedTo.length > 0 ? (
+                  <div className="flex -space-x-2 overflow-hidden items-center group">
+                    {task.assignedTo.slice(0, 3).map((assignee) => (
+                      <Avatar key={assignee._id} className="h-8 w-8 border-2 border-white dark:border-gray-900 z-10 hover:z-20 transition-all cursor-pointer" title={assignee.name}>
+                        <AvatarImage src={assignee.profilePicture || ""} alt={assignee.name} />
+                        <AvatarFallback className={`${getAvatarColor(assignee.name)} text-[9px]`}>
+                          {getAvatarFallbackText(assignee.name)}
+                        </AvatarFallback>
+                      </Avatar>
+                    ))}
+                    {task.assignedTo.length > 3 && (
+                      <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-[10px] border-2 border-white dark:border-gray-900 z-10" title={`+${task.assignedTo.length - 3} more`}>
+                        +{task.assignedTo.length - 3}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-xs text-muted-foreground">Unassigned</span>
+                )}
               </div>
             </li>
           );

@@ -25,7 +25,7 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
 
   try {
     const info = await transporter.sendMail({
-      from: `"${process.env.FROM_NAME || "ZOHO"}" <${process.env.FROM_EMAIL || process.env.SMTP_USER
+      from: `"${process.env.FROM_NAME || "Aura"}" <${process.env.FROM_EMAIL || process.env.SMTP_USER
         }>`, // sender address
       to,
       subject,

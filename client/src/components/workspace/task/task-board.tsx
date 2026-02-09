@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
        DndContext,
        closestCorners,
@@ -13,22 +13,23 @@ import {
        defaultDropAnimationSideEffects,
        DropAnimation,
 } from "@dnd-kit/core";
-import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { TaskType } from "@/types/api.type";
 import { TaskStatusEnum, TaskStatusEnumType } from "@/constant";
 import { TaskColumn } from "./task-column";
-import { TaskCard, TaskCardView } from "./task-card";
+import { TaskCardView } from "./task-card";
 import EditTaskDialog from "./edit-task-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useWorkspaceId from "@/hooks/use-workspace-id";
-import { editTaskMutationFn, getAllTasksQueryFn } from "@/lib/api";
+import { editTaskMutationFn, getAllTasksQueryFn, getProjectByIdQueryFn } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import useTaskTableFilter from "@/hooks/use-task-table-filter";
 import { Loader } from "lucide-react";
 import { useParams } from "react-router-dom";
+import confetti from "canvas-confetti";
 
-// Columns configuration
-const columns: { id: TaskStatusEnumType; title: string }[] = [
+// Default Columns configuration
+const defaultColumns = [
        { id: TaskStatusEnum.TODO, title: "Todo" },
        { id: TaskStatusEnum.IN_PROGRESS, title: "In Progress" },
        { id: TaskStatusEnum.IN_REVIEW, title: "In Review" },
@@ -49,7 +50,6 @@ const dropAnimation: DropAnimation = {
 
 
 export default function TaskBoard() {
-       // ... existing state ...
        const [editingTask, setEditingTask] = useState<TaskType | null>(null);
        const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
@@ -59,16 +59,33 @@ export default function TaskBoard() {
        };
 
        const workspaceId = useWorkspaceId();
-
-       // ... existing hooks ...
-
+       const queryClient = useQueryClient();
 
        const param = useParams();
        const projectIdParam = param.projectId as string;
        const [filters] = useTaskTableFilter();
 
+       // Fetch Project Data for Custom Columns
+       const { data: projectData } = useQuery({
+              queryKey: ["project", workspaceId, projectIdParam],
+              queryFn: () => getProjectByIdQueryFn({ workspaceId, projectId: projectIdParam }),
+              enabled: !!projectIdParam,
+       });
+
+       // Derive active columns
+       const columns = useMemo(() => {
+              if (projectIdParam && projectData?.project?.taskStatuses && projectData.project.taskStatuses.length > 0) {
+                     return projectData.project.taskStatuses
+                            .sort((a, b) => (a.order || 0) - (b.order || 0))
+                            .map(status => ({
+                                   id: status.value as TaskStatusEnumType,
+                                   title: status.label,
+                            }));
+              }
+              return defaultColumns;
+       }, [projectIdParam, projectData]);
+
        // We fetch tasks similarly to the table to ensure consistency
-       // Ideally, we'd share this data via context or react-query cache, which we are doing.
        const { data, isLoading } = useQuery({
               queryKey: [
                      "all-tasks",
@@ -146,12 +163,6 @@ export default function TaskBoard() {
               const overId = over.id;
 
               if (activeId === overId) return;
-
-              // We only handle immediate visual feedback in drag over if needed
-              // For Kanban moving between columns, we might rely on DragEnd or implement
-              // custom visual logic if we want real-time preview of the card in the new column.
-              // For simplicity with dnd-kit sortable, we can just use DragEnd for logical updates
-              // if we don't need precise reordering *within* the column in real-time in this MVP.
        };
 
        const onDragEnd = (event: DragEndEvent) => {
@@ -166,7 +177,6 @@ export default function TaskBoard() {
               const activeTask = tasks.find((t) => t._id === activeId);
 
               // Find dropping column
-              // The over.id could be a "Task ID" (if dropped on another task) OR a "Column ID" (if dropped on empty column)
               let newStatus: TaskStatusEnumType | null = null;
 
               // Check if over is a column
@@ -187,6 +197,16 @@ export default function TaskBoard() {
                             t._id === activeId ? { ...t, status: newStatus as TaskStatusEnumType } : t
                      );
                      setTasks(updatedTasks);
+
+                     // Trigger Confetti if moved to DONE
+                     if (newStatus === ("DONE" as TaskStatusEnumType)) {
+                            confetti({
+                                   particleCount: 100,
+                                   spread: 70,
+                                   origin: { y: 0.6 },
+                                   colors: ["#6366f1", "#8b5cf6", "#ec4899", "#10b981"], // Aura Theme Colors
+                            });
+                     }
 
                      // API Call
                      if (activeTask.project?._id) {
@@ -231,6 +251,7 @@ export default function TaskBoard() {
                                           key={col.id}
                                           column={col}
                                           tasks={tasks.filter((task) => task.status === col.id)}
+                                          onEditTask={onEditTask}
                                    />
                             ))}
                      </div>

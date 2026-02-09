@@ -19,6 +19,13 @@ export const createProjectService = async (
     description: body.description,
     workspace: workspaceId,
     createdBy: userId,
+    taskStatuses: [
+      { label: "Todo", value: "TODO", color: "#6366f1", order: 1 },
+      { label: "In Progress", value: "IN_PROGRESS", color: "#eab308", order: 2 },
+      { label: "In Review", value: "IN_REVIEW", color: "#ec4899", order: 3 },
+      { label: "Done", value: "DONE", color: "#22c55e", order: 4 },
+      { label: "Backlog", value: "BACKLOG", color: "#9ca3af", order: 5 },
+    ],
   });
 
   await project.save();
@@ -29,19 +36,24 @@ export const createProjectService = async (
 export const getProjectsInWorkspaceService = async (
   workspaceId: string,
   pageSize: number,
-  pageNumber: number
+  pageNumber: number,
+  userId?: string,
+  role?: string
 ) => {
   // Step 1: Find all projects in the workspace
-
-  const totalCount = await ProjectModel.countDocuments({
+  const query: any = {
     workspace: workspaceId,
-  });
+  };
+
+  if (role === "MEMBER" || role === "CLIENT") {
+    query.$or = [{ createdBy: userId }, { members: userId }];
+  }
+
+  const totalCount = await ProjectModel.countDocuments(query);
 
   const skip = (pageNumber - 1) * pageSize;
 
-  const projects = await ProjectModel.find({
-    workspace: workspaceId,
-  })
+  const projects = await ProjectModel.find(query)
     .skip(skip)
     .limit(pageSize)
     .populate("createdBy", "_id name profilePicture -password")
@@ -139,9 +151,10 @@ export const updateProjectService = async (
     emoji?: string;
     name: string;
     description?: string;
+    taskStatuses?: { label: string; value: string; color?: string; order?: number }[];
   }
 ) => {
-  const { name, emoji, description } = body;
+  const { name, emoji, description, taskStatuses } = body;
 
   const project = await ProjectModel.findOne({
     _id: projectId,
@@ -156,7 +169,14 @@ export const updateProjectService = async (
 
   if (emoji) project.emoji = emoji;
   if (name) project.name = name;
-  if (description) project.description = description;
+  if (taskStatuses) {
+    project.taskStatuses = taskStatuses.map((status, index) => ({
+      label: status.label,
+      value: status.value,
+      color: status.color || "#6366f1",
+      order: status.order ?? index + 1,
+    }));
+  }
 
   await project.save();
 

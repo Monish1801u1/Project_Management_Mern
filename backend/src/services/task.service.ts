@@ -15,7 +15,7 @@ export const createTaskService = async (
     description?: string;
     priority: string;
     status: string;
-    assignedTo?: string | null;
+    assignedTo?: string[] | null; // Changed to string[]
     dueDate?: string;
   }
 ) => {
@@ -28,22 +28,26 @@ export const createTaskService = async (
       "Project not found or does not belong to this workspace"
     );
   }
-  if (assignedTo) {
-    const isAssignedUserMember = await MemberModel.exists({
-      userId: assignedTo,
+
+  if (assignedTo && assignedTo.length > 0) {
+    const members = await MemberModel.find({
+      userId: { $in: assignedTo },
       workspaceId,
     });
 
-    if (!isAssignedUserMember) {
-      throw new Error("Assigned user is not a member of this workspace.");
+    if (members.length !== assignedTo.length) {
+      throw new BadRequestException(
+        "One or more assigned users are not members of this workspace."
+      );
     }
   }
+
   const task = new TaskModel({
     title,
     description,
     priority: priority || TaskPriorityEnum.MEDIUM,
     status: status || TaskStatusEnum.TODO,
-    assignedTo,
+    assignedTo: assignedTo || [],
     createdBy: userId,
     workspace: workspaceId,
     project: projectId,
@@ -73,7 +77,7 @@ export const updateTaskService = async (
     description?: string;
     priority: string;
     status: string;
-    assignedTo?: string | null;
+    assignedTo?: string[] | null;
     dueDate?: string;
   },
   userId: string
@@ -119,6 +123,8 @@ export const updateTaskService = async (
   // We need userId here. updateTaskService doesn't accept userId currently?
   // Checking signature... updateTaskService(workspaceId, projectId, taskId, body).
   // It lacks userId. We should probably pass userId to updateTaskService.
+  // For now I will skip logging UPDATE to avoid breaking signature or assume system/anon if I can't easily change controller.
+  // Actually, I should update the controller to pass userId.
   // For now I will skip logging UPDATE to avoid breaking signature or assume system/anon if I can't easily change controller.
   // Actually, I should update the controller to pass userId.
 

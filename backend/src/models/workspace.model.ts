@@ -6,6 +6,7 @@ export interface WorkspaceDocument extends Document {
   description: string;
   owner: mongoose.Types.ObjectId;
   inviteCode: string;
+  inviteCodeClient: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +26,12 @@ const workspaceSchema = new Schema<WorkspaceDocument>(
       unique: true,
       default: generateInviteCode,
     },
+    inviteCodeClient: {
+      type: String,
+      required: true,
+      unique: true,
+      default: generateInviteCode,
+    },
   },
   {
     timestamps: true,
@@ -33,6 +40,7 @@ const workspaceSchema = new Schema<WorkspaceDocument>(
 
 workspaceSchema.methods.resetInviteCode = function () {
   this.inviteCode = generateInviteCode();
+  this.inviteCodeClient = generateInviteCode();
 };
 
 const WorkspaceModel = mongoose.model<WorkspaceDocument>(

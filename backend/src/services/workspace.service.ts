@@ -326,9 +326,11 @@ export const deleteWorkspaceService = async (
 };
 
 export const getWorkspaceByInviteCodeService = async (inviteCode: string) => {
-  const workspace = await WorkspaceModel.findOne({ inviteCode })
+  const workspace = await WorkspaceModel.findOne({
+    $or: [{ inviteCode }, { inviteCodeClient: inviteCode }],
+  })
     .populate("owner", "name")
-    .select("name description owner inviteCode");
+    .select("name description owner inviteCode inviteCodeClient");
 
   if (!workspace) {
     throw new NotFoundException("Workspace not found");

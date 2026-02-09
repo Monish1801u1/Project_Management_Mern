@@ -1,18 +1,25 @@
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import React, { useState } from "react";
+import { useState } from "react";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { enUS } from "date-fns/locale";
 import { TaskType } from "@/types/api.type";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { useQuery } from "@tanstack/react-query";
-import { getAllTasksQueryFn } from "@/lib/api";
+import { getAllTasksQueryFn, getProjectsInWorkspaceQueryFn } from "@/lib/api";
 import {
        Dialog,
        DialogContent,
        DialogHeader,
        DialogTitle,
 } from "@/components/ui/dialog";
+import {
+       Select,
+       SelectContent,
+       SelectItem,
+       SelectTrigger,
+       SelectValue,
+} from "@/components/ui/select";
 import { TaskCard } from "./task-card";
 import { Loader } from "lucide-react";
 
@@ -41,9 +48,22 @@ interface TaskEvent {
 const TaskCalendar = () => {
        const workspaceId = useWorkspaceId();
 
+       const { data: projectsData } = useQuery({
+              queryKey: ["allprojects", workspaceId],
+              queryFn: () => getProjectsInWorkspaceQueryFn({ workspaceId, pageSize: 1000 }),
+       });
+       const projects = projectsData?.projects || [];
+
+       const [projectId, setProjectId] = useState<string>("all");
+
        const { data, isLoading } = useQuery({
-              queryKey: ["all-tasks", workspaceId],
-              queryFn: () => getAllTasksQueryFn({ workspaceId, pageSize: 100 }), // Fetch more tasks for calendar
+              queryKey: ["all-tasks", workspaceId, projectId],
+              queryFn: () =>
+                     getAllTasksQueryFn({
+                            workspaceId,
+                            pageSize: 100,
+                            projectId: projectId === "all" ? undefined : projectId,
+                     }),
        });
 
        const tasks = data?.tasks || [];
@@ -77,7 +97,7 @@ const TaskCalendar = () => {
               if (priority === "HIGH") backgroundColor = "#ef4444"; // Red
               if (priority === "MEDIUM") backgroundColor = "#f59e0b"; // Amber
               if (priority === "LOW") backgroundColor = "#10b981"; // Green
-              if (priority === "URGENT") backgroundColor = "#7f1d1d"; // Dark Red
+
 
               return {
                      style: {
@@ -100,19 +120,37 @@ const TaskCalendar = () => {
        }
 
        return (
-              <div className="h-[calc(100vh-220px)] w-full bg-white dark:bg-zinc-950 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                     <Calendar
-                            localizer={localizer}
-                            events={events}
-                            startAccessor="start"
-                            endAccessor="end"
-                            style={{ height: "100%" }}
-                            views={["month", "week", "day"]}
-                            defaultView="month"
-                            onSelectEvent={handleSelectEvent}
-                            eventPropGetter={eventStyleGetter}
-                            className="text-sm"
-                     />
+              <div className="h-[calc(100vh-220px)] w-full bg-white dark:bg-zinc-950 p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col gap-4">
+                     <div className="flex justify-end">
+                            <Select value={projectId} onValueChange={setProjectId}>
+                                   <SelectTrigger className="w-[180px]">
+                                          <SelectValue placeholder="All Projects" />
+                                   </SelectTrigger>
+                                   <SelectContent>
+                                          <SelectItem value="all">All Projects</SelectItem>
+                                          {projects.map((project: any) => (
+                                                 <SelectItem key={project._id} value={project._id}>
+                                                        {project.name}
+                                                 </SelectItem>
+                                          ))}
+                                   </SelectContent>
+                            </Select>
+                     </div>
+
+                     <div className="flex-1">
+                            <Calendar
+                                   localizer={localizer}
+                                   events={events}
+                                   startAccessor="start"
+                                   endAccessor="end"
+                                   style={{ height: "100%" }}
+                                   views={["month", "week", "day"]}
+                                   defaultView="month"
+                                   onSelectEvent={handleSelectEvent}
+                                   eventPropGetter={eventStyleGetter}
+                                   className="text-sm"
+                            />
+                     </div>
 
                      {/* View Task Details Dialog */}
                      <Dialog

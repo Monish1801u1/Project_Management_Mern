@@ -49,7 +49,13 @@ export const getAllProjectsInWorkspaceController = asyncHandler(
     const pageNumber = parseInt(req.query.pageNumber as string) || 1;
 
     const { projects, totalCount, totalPages, skip } =
-      await getProjectsInWorkspaceService(workspaceId, pageSize, pageNumber);
+      await getProjectsInWorkspaceService(
+        workspaceId,
+        pageSize,
+        pageNumber,
+        userId,
+        role
+      );
 
     return res.status(HTTPSTATUS.OK).json({
       message: "Project fetched successfully",

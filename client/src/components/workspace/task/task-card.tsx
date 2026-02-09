@@ -52,11 +52,6 @@ export function TaskCardView({
                             ? "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
                             : "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20";
 
-       // Assignee Details
-       const assigneeName = task.assignedTo?.name || "Unassigned";
-       const assigneeInitials = getAvatarFallbackText(assigneeName);
-       const assigneeColor = getAvatarColor(assigneeName);
-
        return (
               <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
                      <Card
@@ -102,20 +97,25 @@ export function TaskCardView({
                             <Separator className="my-1" />
                             <CardFooter className="p-3 pt-2 flex justify-between items-center text-xs text-muted-foreground">
                                    <div className="flex items-center gap-2">
-                                          {task.assignedTo ? (
-                                                 <div className="flex items-center gap-1.5" title={assigneeName}>
-                                                        <Avatar className="h-6 w-6">
-                                                               <AvatarImage
-                                                                      src={task.assignedTo.profilePicture || ""}
-                                                                      alt={assigneeName}
-                                                               />
-                                                               <AvatarFallback
-                                                                      className={`text-[9px] ${assigneeColor}`}
-                                                               >
-                                                                      {assigneeInitials}
-                                                               </AvatarFallback>
-                                                        </Avatar>
-                                                        <span className="max-w-[80px] truncate">{assigneeName}</span>
+                                          {task.assignedTo && task.assignedTo.length > 0 ? (
+                                                 <div className="flex -space-x-2 overflow-hidden">
+                                                        {task.assignedTo.slice(0, 3).map((assignee) => {
+                                                               const initials = getAvatarFallbackText(assignee.name);
+                                                               const color = getAvatarColor(assignee.name);
+                                                               return (
+                                                                      <Avatar key={assignee._id} className="h-6 w-6 border-2 border-white dark:border-gray-900 z-10 hover:z-20 transition-all" title={assignee.name}>
+                                                                             <AvatarImage src={assignee.profilePicture || ""} alt={assignee.name} />
+                                                                             <AvatarFallback className={`text-[9px] ${color}`}>
+                                                                                    {initials}
+                                                                             </AvatarFallback>
+                                                                      </Avatar>
+                                                               );
+                                                        })}
+                                                        {task.assignedTo.length > 3 && (
+                                                               <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center text-[9px] border-2 border-white dark:border-gray-900 z-10">
+                                                                      +{task.assignedTo.length - 3}
+                                                               </div>
+                                                        )}
                                                  </div>
                                           ) : (
                                                  <div className="flex items-center gap-1">

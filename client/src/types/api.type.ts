@@ -1,5 +1,5 @@
-import {
-  PermissionType,
+PermissionType,
+  ProjectStatusEnumType,
   TaskPriorityEnumType,
   TaskStatusEnumType,
 } from "@/constant";
@@ -50,6 +50,7 @@ export type WorkspaceType = {
   description?: string;
   owner: string;
   inviteCode: string;
+  inviteCodeClient: string;
 };
 
 export type CreateWorkspaceType = {
@@ -189,10 +190,13 @@ export type ProjectType = {
     name: string;
     profilePicture: string;
   };
+  members: string[];
   budget: number;
   currency: string;
   createdAt: string;
   updatedAt: string;
+  taskStatuses?: { label: string; value: string; color: string; order: number }[];
+  status: ProjectStatusEnumType;
 };
 
 export type CreateProjectPayloadType = {
@@ -201,6 +205,8 @@ export type CreateProjectPayloadType = {
     emoji: string;
     name: string;
     description: string;
+    status?: ProjectStatusEnumType;
+    budget?: number;
   };
 };
 
@@ -216,6 +222,8 @@ export type EditProjectPayloadType = {
     emoji: string;
     name: string;
     description: string;
+    taskStatuses?: { label: string; value: string; color: string; order: number }[];
+    status?: ProjectStatusEnumType;
   };
 };
 
@@ -240,8 +248,7 @@ export type ProjectByIdPayloadType = {
   projectId: string;
 };
 
-//********** */ TASK TYPES ************************
-//************************************************* */
+// ************************************************* */
 
 export type CreateTaskPayloadType = {
   workspaceId: string;
@@ -251,7 +258,7 @@ export type CreateTaskPayloadType = {
     description: string;
     priority: TaskPriorityEnumType;
     status: TaskStatusEnumType;
-    assignedTo: string;
+    assignedTo: string[];
     dueDate: string;
   };
 };
@@ -267,8 +274,9 @@ export type EditTaskPayloadType = {
     description: string;
     priority: TaskPriorityEnumType;
     status: TaskStatusEnumType;
-    assignedTo: string;
+    assignedTo: string[];
     dueDate: string;
+    subtasks: { _id?: string; title: string; completed: boolean }[];
   }>;
 };
 
@@ -288,12 +296,13 @@ export type TaskType = {
     _id: string;
     name: string;
     profilePicture: string | null;
-  } | null;
+  }[];
   createdBy?: string;
   dueDate: string;
   taskCode: string;
   isMilestone: boolean;
   cost: number;
+  subtasks: { _id: string; title: string; completed: boolean }[];
   createdAt?: string;
   updatedAt?: string;
 };

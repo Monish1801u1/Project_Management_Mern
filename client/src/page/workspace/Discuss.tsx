@@ -5,7 +5,7 @@ import { getWorkspaceDiscussionsQueryFn, createDiscussionMutationFn } from "@/li
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { Loader, Send } from "lucide-react";
 import { getAvatarColor, getAvatarFallbackText } from "@/lib/helper";

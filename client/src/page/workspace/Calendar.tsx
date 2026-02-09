@@ -78,7 +78,7 @@ const Calendar = () => {
 
                             {/* Calendar Grid */}
                             <CardContent className="flex-1 p-0 grid grid-cols-7 grid-rows-5 md:grid-rows-6">
-                                   {days.map((day, dayIdx) => {
+                                   {days.map((day) => {
                                           const isCurrentMonth = isSameMonth(day, currentMonth);
                                           const isToday = isSameDay(day, new Date());
 

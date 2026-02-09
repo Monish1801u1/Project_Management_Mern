@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 
@@ -19,16 +19,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import useWorkspaceId from "@/hooks/use-workspace-id";
 import { deleteProjectMutationFn, editProjectMutationFn, getProjectByIdQueryFn } from "@/lib/api";
-import { Loader, Trash2, ArrowLeft, Save } from "lucide-react";
+import { Loader, Trash2, ArrowLeft, Save, Plus, GripVertical } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfirmDialog } from "@/components/resuable/confirm-dialog";
-import { useState } from "react";
 import EmojiPickerComponent from "@/components/emoji-picker";
 
 const projectSchema = z.object({
        name: z.string().min(1, { message: "Project name is required" }),
        description: z.string().optional(),
        emoji: z.string().optional(),
+       taskStatuses: z.array(z.object({
+              label: z.string().min(1, "Label is required"),
+              value: z.string().min(1, "Value is required"),
+              color: z.string().optional(),
+              order: z.number().optional(),
+       })).optional(),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -55,7 +60,13 @@ const ProjectSettings = () => {
                      name: "",
                      description: "",
                      emoji: "📊",
+                     taskStatuses: [],
               },
+       });
+
+       const { fields, append, remove } = useFieldArray({
+              control: form.control,
+              name: "taskStatuses",
        });
 
        useEffect(() => {
@@ -64,6 +75,7 @@ const ProjectSettings = () => {
                             name: project.name,
                             description: project.description || "",
                             emoji: project.emoji || "📊",
+                            taskStatuses: project.taskStatuses || [],
                      });
               }
        }, [project, form]);
@@ -107,6 +119,13 @@ const ProjectSettings = () => {
        });
 
        const onSubmit = (values: ProjectFormValues) => {
+              // Ensure order is correct
+              const taskStatusesWithOrder = values.taskStatuses?.map((status, index) => ({
+                     ...status,
+                     color: status.color || "#000000",
+                     order: index + 1,
+              }));
+
               editProject({
                      projectId,
                      workspaceId,
@@ -114,6 +133,7 @@ const ProjectSettings = () => {
                             name: values.name,
                             description: values.description || "",
                             emoji: values.emoji || "📊",
+                            taskStatuses: taskStatusesWithOrder,
                      }
               })
        };
@@ -122,6 +142,18 @@ const ProjectSettings = () => {
               deleteProject({
                      workspaceId,
                      projectId
+              });
+       };
+
+       const handleAddColumn = () => {
+              const newLabel = "New Column";
+              // Simple value generation: NEW_COLUMN_TIMESTAMP
+              const newValue = `STATUS_${Date.now()}`;
+              append({
+                     label: newLabel,
+                     value: newValue,
+                     color: "#6366f1", // Default color
+                     order: fields.length + 1,
               });
        };
 
@@ -207,7 +239,51 @@ const ProjectSettings = () => {
                                                                       )}
                                                                />
                                                         </div>
-                                                        <div className="flex justify-end">
+
+                                                        <div className="border-t pt-6">
+                                                               <div className="flex items-center justify-between mb-4">
+                                                                      <div>
+                                                                             <h3 className="text-lg font-medium">Kanban Board Columns</h3>
+                                                                             <p className="text-sm text-muted-foreground">Customize the columns for your board view.</p>
+                                                                      </div>
+                                                                      <Button type="button" size="sm" onClick={handleAddColumn} variant="outline">
+                                                                             <Plus className="h-4 w-4 mr-2" />
+                                                                             Add Column
+                                                                      </Button>
+                                                               </div>
+
+                                                               <div className="space-y-3">
+                                                                      {fields.map((field, index) => (
+                                                                             <div key={field.id} className="flex items-center gap-3">
+                                                                                    <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                                                                                    <FormField
+                                                                                           control={form.control}
+                                                                                           name={`taskStatuses.${index}.label`}
+                                                                                           render={({ field }) => (
+                                                                                                  <FormItem className="flex-1 space-y-0">
+                                                                                                         <FormControl>
+                                                                                                                <Input {...field} placeholder="Column Name" />
+                                                                                                         </FormControl>
+                                                                                                         <FormMessage />
+                                                                                                  </FormItem>
+                                                                                           )}
+                                                                                    />
+                                                                                    <Button
+                                                                                           type="button"
+                                                                                           variant="ghost"
+                                                                                           size="icon"
+                                                                                           className="text-muted-foreground hover:text-destructive"
+                                                                                           onClick={() => remove(index)}
+                                                                                           disabled={fields.length <= 1}
+                                                                                    >
+                                                                                           <Trash2 className="h-4 w-4" />
+                                                                                    </Button>
+                                                                             </div>
+                                                                      ))}
+                                                               </div>
+                                                        </div>
+
+                                                        <div className="flex justify-end pt-4">
                                                                <Button type="submit" disabled={isEditing}>
                                                                       {isEditing ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                                                                       Save Changes

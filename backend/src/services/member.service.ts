@@ -88,11 +88,18 @@ export const joinWorkspaceByInviteService = async (
   userId: string,
   inviteCode: string
 ) => {
-  // Find workspace by invite code
-  const workspace = await WorkspaceModel.findOne({ inviteCode }).exec();
+  // Find workspace by invite code (check both codes)
+  const workspace = await WorkspaceModel.findOne({
+    $or: [{ inviteCode }, { inviteCodeClient: inviteCode }],
+  }).exec();
+
   if (!workspace) {
     throw new NotFoundException("Invalid invite code or workspace not found");
   }
+
+  // Determine role based on which code matched
+  const isClientCode = workspace.inviteCodeClient === inviteCode;
+  const roleName = isClientCode ? Roles.CLIENT : Roles.MEMBER;
 
   // Check if user is already a member
   const existingMember = await MemberModel.findOne({
@@ -104,21 +111,31 @@ export const joinWorkspaceByInviteService = async (
     throw new BadRequestException("You are already a member of this workspace");
   }
 
-  let role = await RoleModel.findOne({ name: Roles.MEMBER });
+  let role = await RoleModel.findOne({ name: roleName });
 
   if (!role) {
-    // Auto-create the role if it doesn't exist (Lazy Seeding)
-    role = await RoleModel.create({
-      name: Roles.MEMBER,
-      permissions: [
-        Permissions.CREATE_TASK,
-        Permissions.EDIT_TASK,
-        Permissions.VIEW_ONLY,
-      ],
-    });
+    // If Client role is missing, ensure we have it or fallback/error?
+    // We should probably ensure roles exist.
+    role = await RoleModel.findOne({ name: Roles.MEMBER }); // Fallback (should ideally throw or seed)
+    if (!role) {
+      // Auto-create MEMBER as last resort
+      role = await RoleModel.create({
+        name: Roles.MEMBER,
+        permissions: [
+          Permissions.CREATE_TASK,
+          Permissions.EDIT_TASK,
+          Permissions.VIEW_ONLY,
+        ],
+      });
+    }
+    // Ideally we'd seed Client role too if missing, but let's assume it exists from previous steps
+    if (roleName === Roles.CLIENT) {
+      const clientRole = await RoleModel.findOne({ name: Roles.CLIENT });
+      if (clientRole) role = clientRole;
+    }
   }
 
-  // Add user to workspace as a member
+  // Add user to workspace
   const newMember = new MemberModel({
     userId,
     workspaceId: workspace._id,

@@ -14,10 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "../../ui/textarea";
 import EmojiPickerComponent from "@/components/emoji-picker";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ProjectStatusEnum, ProjectStatusEnumType } from "@/constant";
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useWorkspaceId from "@/hooks/use-workspace-id";
@@ -46,6 +50,7 @@ export default function CreateProjectForm({
       message: "Project title is required",
     }),
     description: z.string().trim(),
+    status: z.enum(["PLANNING", "IN_PROGRESS", "COMPLETED", "ON_HOLD"]).optional(),
     budget: z.number().min(0).optional(),
   });
 
@@ -54,6 +59,7 @@ export default function CreateProjectForm({
     defaultValues: {
       name: "",
       description: "",
+      status: ProjectStatusEnum.IN_PROGRESS,
       budget: 0,
     },
   });
@@ -100,36 +106,21 @@ export default function CreateProjectForm({
   return (
     <div className="w-full h-auto max-w-full">
       <div className="h-full">
-        <div className="mb-5 pb-2 border-b">
-          <h1
-            className="text-xl tracking-[-0.16px] dark:text-[#fcfdffef] font-semibold mb-1
-           text-center sm:text-left"
-          >
-            Create Project
-          </h1>
-          <p className="text-muted-foreground text-sm leading-tight">
-            Organize and manage tasks, resources, and team collaboration
-          </p>
-        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">
                 Select Emoji
               </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="font-normal size-[60px] !p-2 !shadow-none mt-2 items-center rounded-full "
-                  >
-                    <span className="text-4xl">{emoji}</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className=" !p-0">
-                  <EmojiPickerComponent onSelectEmoji={handleEmojiSelection} />
-                </PopoverContent>
-              </Popover>
+              <EmojiPickerComponent onSelectEmoji={handleEmojiSelection}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="font-normal size-[60px] !p-2 !shadow-none mt-2 items-center rounded-full "
+                >
+                  <span className="text-4xl">{emoji}</span>
+                </Button>
+              </EmojiPickerComponent>
             </div>
             <div className="mb-4">
               <FormField
@@ -171,6 +162,38 @@ export default function CreateProjectForm({
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="mb-4">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                      Status
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {Object.values(ProjectStatusEnum).map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status.replace("_", " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
