@@ -86,28 +86,40 @@ Project-Management/
        main.tsx         # Entry point
     public/              # Static assets
     vite.config.ts       # Vite configuration
-    tailwind.config.js   # Tailwind CSS configuration
-    package.json         # Dependencies
- README.md
- PROJECT_REPORT.md
-```
+    # Project Management (MERN)
 
-##  Installation & Setup
+   Lightweight, extensible project and workspace management app built with the MERN stack (MongoDB, Express, React, Node) and TypeScript.
 
-### Backend Setup
+   **This repo contains two main folders:** `backend/` (API + services) and `client/` (Vite + React frontend).
 
-1. **Navigate to backend directory:**
-   ```bash
+   ## Quick Start
+
+   Prerequisites:
+   - Node.js 14+ and npm
+   - MongoDB (local or Atlas)
+
+   1. Install backend dependencies and run:
+
+   ```powershell
    cd backend
-   ```
-
-2. **Install dependencies:**
-   ```bash
    npm install
+   npm run dev
    ```
 
-3. **Configure environment variables:**
-   Create a `.env` file in the `backend` directory with the following variables:
+   2. Install frontend dependencies and run:
+
+   ```powershell
+   cd client
+   npm install
+   npm run dev
+   ```
+
+   The frontend expects an API base URL in `client/.env.local` (example below).
+
+   ## Environment (examples)
+
+   Backend `.env` (backend/.env):
+
    ```
    NODE_ENV=development
    PORT=5000
@@ -116,111 +128,45 @@ Project-Management/
    JWT_EXPIRE=7d
    ```
 
-4. **Start the backend server:**
-   ```bash
-   npm run dev
-   ```
+   Frontend `.env.local` (client/.env.local):
 
-### Frontend Setup
-
-1. **Navigate to client directory:**
-   ```bash
-   cd client
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables:**
-   Create a `.env.local` file in the `client` directory:
    ```
    VITE_API_URL=http://localhost:5000/api
    ```
 
-4. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+   ## Project Structure (high level)
 
-##  Running the Application
+   - `backend/` — Express API, models, controllers, services, validation, seeders
+   - `client/` — React + TypeScript app (Vite), components, pages, routes
 
-### Development Mode
+   See the folders for more details.
 
-**Option 1: Run backend and frontend separately**
-- Backend: Navigate to `backend/` and run `npm run dev`
-- Frontend: Navigate to `client/` and run `npm run dev`
+   ## Scripts
 
-**Option 2: Run from root (if configured)**
-```bash
-npm run dev
-```
+   From `backend/`:
+   - `npm run dev` — start dev server (ts-node / nodemon)
+   - `npm run build` — compile TypeScript
+   - `npm start` — run compiled server
 
-### Production Build
+   From `client/`:
+   - `npm run dev` — start Vite dev server
+   - `npm run build` — build production assets
 
-**Backend:**
-```bash
-cd backend
-npm run build
-npm start
-```
+   ## Testing & Linting
 
-**Frontend:**
-```bash
-cd client
-npm run build
-```
+   Check `package.json` files in each package for available test, lint, and format scripts.
 
-##  API Documentation
+   ## Contributing
 
-### Authentication Routes
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
+   - Fork the repo and create a feature branch
+   - Open a pull request with a clear description
 
-### Workspace Routes
-- `GET /api/workspaces` - Get all workspaces
-- `POST /api/workspaces` - Create workspace
-- `PUT /api/workspaces/:id` - Update workspace
-- `DELETE /api/workspaces/:id` - Delete workspace
+   If you want a release tag, CI, or a PR drafted from this change, tell me and I can create it.
 
-### Project Routes
-- `GET /api/projects` - Get all projects
-- `POST /api/projects` - Create project
-- `PUT /api/projects/:id` - Update project
-- `DELETE /api/projects/:id` - Delete project
+   ## License
 
-### Task Routes
-- `GET /api/tasks` - Get all tasks
-- `POST /api/tasks` - Create task
-- `PUT /api/tasks/:id` - Update task
-- `DELETE /api/tasks/:id` - Delete task
+   Proprietary — please contact the maintainers for details.
 
-### User & Member Routes
-- `GET /api/users/profile` - Get user profile
-- `PUT /api/users/profile` - Update user profile
-- `GET /api/members` - Get workspace members
-- `POST /api/members/invite` - Invite member
+   ---
 
-### Comments & Discussions
-- `GET /api/comments` - Get comments
-- `POST /api/comments` - Create comment
-- `GET /api/discussions` - Get discussions
-- `POST /api/discussions` - Create discussion
-
-##  Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-##  License
-
-This project is proprietary. All rights reserved.
-
-##  Support
-
-For support or questions, please contact the development team.
+   Updated README — focused quick-start and env examples.
